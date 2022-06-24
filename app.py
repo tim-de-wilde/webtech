@@ -1,4 +1,4 @@
-from src import app, db
+from src import app, db, migrate
 from src.routes import web
 from src.models import *
 

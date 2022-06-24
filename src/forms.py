@@ -14,3 +14,13 @@ class RegisterForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Wachtwoord', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Wachtwoord bevestigen', validators=[DataRequired(), EqualTo('password', message='Wachtwoorden komen niet overeen.')])
+
+
+class ActorForm(FlaskForm):
+    first_name = StringField('First name', validators=[DataRequired()])
+    last_name = StringField('Last name', validators=[DataRequired()])
+
+
+class DeleteForm(FlaskForm):
+    id = StringField('Id', validators=[DataRequired()])
+

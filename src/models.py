@@ -33,14 +33,6 @@ class Actor(db.Model):
     first_name = db.Column(db.String(64), nullable=False)
     last_name = db.Column(db.String(64), nullable=False)
 
-    films = db.relationship(
-        'Film', back_populates='actor', cascade='all, delete-orphan'
-    )
-
-    roles = db.relationship(
-        'Role', back_populates='actor', cascade='all, delete-orphan'
-    )
-
     def __init__(self, first_name, last_name):
         self.first_name = first_name
         self.last_name = last_name
@@ -52,10 +44,6 @@ class Director(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(64), nullable=False)
     last_name = db.Column(db.String(64), nullable=False)
-
-    films = db.relationship(
-        'Film', back_populates='director', cascade='all, delete-orphan'
-    )
 
     def __init__(self, first_name, last_name):
         self.first_name = first_name
@@ -70,14 +58,6 @@ class Film(db.Model):
     year = db.Column(db.Integer, nullable=False)
     director_id = db.Column(db.Integer, db.ForeignKey('directors.id'), nullable=False)
 
-    actors = db.relationship(
-        'Actor', back_populates='film'
-    )
-
-    roles = db.relationship(
-        'Role', back_populates='film'
-    )
-
     def __init__(self, title, year, director_id):
         self.title = title
         self.year = year
@@ -90,20 +70,12 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     character_name = db.Column(db.String(64), nullable=False)
     actor_id = db.Column(db.Integer, db.ForeignKey('actors.id'), nullable=False)
-    director_id = db.Column(db.Integer, db.ForeignKey('directors.id'), nullable=False)
+    film_id = db.Column(db.Integer, db.ForeignKey('films.id'), nullable=False)
 
-    actor = db.relationship(
-        'Actor', back_populates='role'
-    )
-
-    director = db.relationship(
-        'Director', back_populates='role'
-    )
-
-    def __init__(self, character_name, actor_id, director_id):
+    def __init__(self, character_name, actor_id, film_id):
         self.character_name = character_name
         self.actor_id = actor_id
-        self.director_id = director_id
+        self.film_id = film_id
 
 
 class Comment(db.Model):
@@ -113,14 +85,6 @@ class Comment(db.Model):
     body = db.Column(db.String(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     film_id = db.Column(db.Integer, db.ForeignKey('films.id'), nullable=False)
-
-    user = db.relationship(
-        'User', back_populates='comment'
-    )
-
-    film = db.relationship(
-        'Film', back_populates='comment'
-    )
 
     def __init__(self, body, user_id, film_id):
         self.body = body
