@@ -1,12 +1,22 @@
 from src import app, db
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, login_user, logout_user, current_user
-from src.forms import LoginForm, RegisterForm, ActorForm, DeleteForm, DirectorForm, RoleForm
+from src.forms import LoginForm, RegisterForm, ActorForm, DeleteForm, DirectorForm, RoleForm, FilmForm, CommentForm
 from src.models import User, Actor, Film
 from src.api.ActorApi import ActorApi
 from src.api.DirectorApi import DirectorApi
 from src.api.RoleApi import RoleApi
 from src.api.FilmApi import FilmApi
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
+@app.route('/')
+def redirect_to_films():
+    return redirect(url_for('index_films'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -18,7 +28,7 @@ def login():
             return redirect(url_for('login'))
 
         login_user(user)
-        return redirect(url_for('home'))
+        return redirect(url_for('index_films'))
 
 
     return render_template('login.html', form=form)
@@ -28,7 +38,7 @@ def login():
 def register():
     if current_user.is_authenticated:
         flash('Je bent al ingelogd')
-        return redirect(url_for('home'))
+        return redirect(url_for('index_films'))
 
     form = RegisterForm()
 
@@ -54,13 +64,7 @@ def register():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
-
-
-@app.route('/')
-@login_required
-def home():
-    return render_template('home.html')
+    return redirect(url_for('index_films'))
 
 
 @app.route('/actors')
@@ -214,3 +218,57 @@ def delete_role(role_id):
         return redirect(url_for('index_roles'))
 
     return render_template('roles/confirm_delete.html', role=RoleApi.index_one(role_id), form=form)
+
+
+@app.route('/films')
+def index_films():
+    return render_template('films/index.html', films=FilmApi.index())
+
+
+@app.route('/films/create', methods=['GET', 'POST'])
+@login_required
+def create_film():
+    form = FilmForm()
+
+    if form.validate_on_submit():
+        FilmApi.create(form)
+        flash('Film aangemaakt!')
+        return redirect(url_for('index_films'))
+
+    return render_template('films/create_edit.html', form=form, updating=False, directors=DirectorApi.index())
+
+
+@app.route('/films/<int:film_id>', methods=['GET', 'POST'])
+def show_film(film_id):
+    form = CommentForm()
+
+    if current_user.is_authenticated and form.validate_on_submit():
+        FilmApi.create_comment(film_id, current_user.id, form)
+
+    return render_template('films/show.html', film=FilmApi.index_one(film_id), form=form)
+
+
+@app.route('/films/<int:film_id>/edit', methods=['GET', 'POST'])
+@login_required
+def update_film(film_id):
+    form = FilmForm()
+
+    if form.validate_on_submit():
+        FilmApi.update(film_id, form)
+        flash('Film aangepast!')
+        return redirect(url_for('index_films'))
+
+    return render_template('films/create_edit.html', form=form, updating=True, film=FilmApi.index_one(film_id), directors=DirectorApi.index())
+
+
+@app.route('/films/<int:film_id>/delete', methods=['GET', 'POST'])
+@login_required
+def delete_film(film_id):
+    form = DeleteForm()
+
+    if form.validate_on_submit():
+        FilmApi.delete(form.id.data)
+        flash('Film verwijderd.')
+        return redirect(url_for('index_films'))
+
+    return render_template('films/confirm_delete.html', film=FilmApi.index_one(film_id), form=form)

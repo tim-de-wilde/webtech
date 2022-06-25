@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, Length, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField
+from wtforms.validators import DataRequired, Email, Length, EqualTo, Optional
 from src.models import User
 from src import app
+from src.api.RoleApi import RoleApi
 
 
 class LoginForm(FlaskForm):
@@ -32,6 +33,15 @@ class RoleForm(FlaskForm):
     film_id = StringField('Film id', validators=[DataRequired()])
 
 
+class FilmForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    year = StringField('Title', validators=[DataRequired()])
+    director_id = StringField('Title', validators=[DataRequired()])
+
+
+class CommentForm(FlaskForm):
+    body = StringField('Body', validators=[DataRequired()])
+
+
 class DeleteForm(FlaskForm):
     id = StringField('Id', validators=[DataRequired()])
-

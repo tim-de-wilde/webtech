@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 from src import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.sql import func
 
 
 @login_manager.user_loader
@@ -64,6 +65,18 @@ class Film(db.Model):
     year = db.Column(db.Integer, nullable=False)
     director_id = db.Column(db.Integer, db.ForeignKey('directors.id'), nullable=False)
 
+    director = db.relationship(
+        'Director', backref='film'
+    )
+
+    roles = db.relationship(
+        'Role', backref='role'
+    )
+
+    comments = db.relationship(
+        'Comment', backref='film', cascade='all, delete-orphan'
+    )
+
     def __init__(self, title, year, director_id):
         self.title = title
         self.year = year
@@ -99,6 +112,11 @@ class Comment(db.Model):
     body = db.Column(db.String(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     film_id = db.Column(db.Integer, db.ForeignKey('films.id'), nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
+
+    user = db.relationship(
+        'User', backref='comment'
+    )
 
     def __init__(self, body, user_id, film_id):
         self.body = body

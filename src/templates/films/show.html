@@ -1,0 +1,116 @@
+{% extends 'layouts/dashboard.html' %}
+{% import 'macros/app.html' as macro %}
+
+
+{% block heading %}
+    {{ macro.breadcrumbs([{'title': 'Films', 'link': url_for('index_films')}, {'title': film.title}]) }}
+{% endblock %}
+
+{% block content %}
+    <div class="space-y-4 md:space-y-6">
+        <div class="sm:flex justify-between space-y-2 sm:space-y-0">
+            <h1 class="text-2xl leading-6 font-semibold text-gray-900">
+                Film: {{ film.title }}
+            </h1>
+
+            {% if current_user.is_authenticated %}
+                <div class="space-x-2">
+                    <a href="{{ url_for('update_film', film_id=film.id) }}"
+                       class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                        Wijzigen
+                    </a>
+
+                    <a href="{{ url_for('delete_film', film_id=film.id) }}"
+                       class="inline-flex text-white items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600">
+                        Verwijderen
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="bg-white shadow-sm overflow-hidden sm:rounded-md">
+            <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Informatie</h3>
+            </div>
+
+            <dl role="list" class="divide-y divide-gray-200">
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 px-4">
+                    <dt class="text-sm font-medium text-gray-500">Titel</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ film.title }}</dd>
+                </div>
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 px-4">
+                    <dt class="text-sm font-medium text-gray-500">Regisseur</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ film.director.full_name() }}</dd>
+                </div>
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 px-4">
+                    <dt class="text-sm font-medium text-gray-500">Jaar uitgebracht</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ film.year }}</dd>
+                </div>
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 px-4">
+                    <dt class="text-sm font-medium text-gray-500">Cast</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex flex-col">
+                        {% for role in film.roles %}
+                            <span>{{ role.actor.full_name() }} als {{ role.character_name }}</span>
+                        {% endfor %}
+                    </dd>
+                </div>
+            </dl>
+        </div>
+
+        {# Comment overview #}
+        <div class="bg-white shadow-sm overflow-hidden sm:rounded-md">
+            <div class="bg-white px-4 py-5 border-b border-gray-200 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Opmerkingen</h3>
+                <p class="mt-1 text-sm text-gray-500">
+                    Voeg hier bijvoorbeeld mooie citaten, onvolledigheden of incorrectheden toe.
+                </p>
+            </div>
+
+            <div class="px-4 py-5">
+                <dl role="list" class="divide-y divide-gray-200">
+                    {% for comment in film.comments %}
+                        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 px-4">
+                            <dt class="text-sm text-gray-500 flex flex-col">
+                                <span class="font-semibold">{{ comment.user.email }}</span>
+                                <span class="font-light">{{ comment.created_at }}</span>
+                            </dt>
+                            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ comment.body }}
+                            </dd>
+                        </div>
+                    {% endfor %}
+                </dl>
+
+                {% if current_user.is_authenticated %}
+                    {# Add a comment #}
+                    <div class="flex items-start space-x-4 pt-5">
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full flex justify-center items-center bg-indigo-500">
+                                <span class="text-white uppercase text-sm">{{ current_user.email[0] }}</span>
+                            </div>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <form action="#" method="POST">
+                                {{ form.csrf_token }}
+                                <div class="border-b border-gray-200 focus-within:border-indigo-600">
+                                    <label for="body" class="sr-only">Add your comment</label>
+                                    <textarea rows="3" name="body" id="body"
+                                              class="block w-full border-0 border-b border-transparent p-0 pb-2 resize-none focus:ring-0 focus:border-indigo-600 sm:text-sm"
+                                              placeholder="Opmerking toevoegen..."></textarea>
+                                </div>
+                                <div class="pt-2 flex justify-between">
+                                    <div class="flex-shrink-0">
+                                        <button type="submit"
+                                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            Post
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
