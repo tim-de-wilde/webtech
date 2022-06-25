@@ -2,7 +2,7 @@
 {% import 'macros/app.html' as macro %}
 
 {% block heading %}
-    {{ macro.breadcrumbs([{'title': 'Rollen', 'link': url_for('index_roles')}, {'title': 'Rol'}]) }}
+    {{ (macro.breadcrumbs([{'title': 'Rollen', 'link': url_for('index_roles')}, {'title': role.character_name, 'link': url_for('show_role', role_id=role.id)}, {'title': 'Aanpassen'}])) if updating else (macro.breadcrumbs([{'title': 'Rollen', 'link': url_for('index_roles')}, {'title': 'Nieuwe rol'}])) }}
 {% endblock %}
 
 {% block content %}

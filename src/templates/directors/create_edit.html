@@ -2,7 +2,7 @@
 {% import 'macros/app.html' as macro %}
 
 {% block heading %}
-    {{ macro.breadcrumbs([{'title': 'Regisseurs', 'link': url_for('index_directors')}, {'title': 'Regisseur'}]) }}
+    {{ (macro.breadcrumbs([{'title': 'Regisseurs', 'link': url_for('index_directors')}, {'title': director.full_name(), 'link': url_for('show_director', director_id=director.id)}, {'title': 'Aanpassen'}])) if updating else (macro.breadcrumbs([{'title': 'Regisseurs', 'link': url_for('index_directors')}, {'title': 'Nieuwe regisseur'}])) }}
 {% endblock %}
 
 {% block content %}

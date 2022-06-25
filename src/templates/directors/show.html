@@ -2,7 +2,7 @@
 {% import 'macros/app.html' as macro %}
 
 {% block heading %}
-    {{ macro.breadcrumbs([{'title': 'Regisseurs', 'link': url_for('index_directors')}, {'title': 'Director'}]) }}
+    {{ macro.breadcrumbs([{'title': 'Regisseurs', 'link': url_for('index_directors')}, {'title': director.full_name()}]) }}
 {% endblock %}
 
 {% block content %}
