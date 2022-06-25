@@ -1,6 +1,7 @@
 /.idea/
 /__pycache__/
+*.py[cod]
 /src/static/css/
 /src/static/js/
 /node_modules/
-/src/__pycache__/
+/src/data.sqlite
