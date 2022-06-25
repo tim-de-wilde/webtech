@@ -1,9 +1,10 @@
 from src import app, db
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, login_user, logout_user, current_user
-from src.forms import LoginForm, RegisterForm, ActorForm, DeleteForm
+from src.forms import LoginForm, RegisterForm, ActorForm, DeleteForm, DirectorForm
 from src.models import User, Actor
 from src.api.ActorApi import ActorApi
+from src.api.DirectorApi import DirectorApi
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -109,3 +110,54 @@ def delete_actor(actor_id):
         return redirect(url_for('index_actors'))
 
     return render_template('actors/confirm_delete.html', actor=ActorApi.index_one(actor_id), form=form)
+
+
+@app.route('/directors')
+@login_required
+def index_directors():
+    return render_template('directors/index.html', directors=DirectorApi.index())
+
+
+@app.route('/directors/create', methods=['GET', 'POST'])
+@login_required
+def create_director():
+    form = DirectorForm()
+
+    if form.validate_on_submit():
+        DirectorApi.create(form)
+        flash('Regisseur aangemaakt!')
+        return redirect(url_for('index_directors'))
+
+    return render_template('directors/create_edit.html', form=form, updating=False)
+
+
+@app.route('/directors/<int:director_id>')
+@login_required
+def show_director(director_id):
+    return render_template('directors/show.html', director=DirectorApi.index_one(director_id))
+
+
+@app.route('/directors/<int:director_id>/edit', methods=['GET', 'POST'])
+@login_required
+def update_director(director_id):
+    form = DirectorForm()
+
+    if form.validate_on_submit():
+        DirectorApi.update(director_id, form)
+        flash('Regisseur aangepast!')
+        return redirect(url_for('index_directors'))
+
+    return render_template('directors/create_edit.html', form=form, updating=True, director=DirectorApi.index_one(director_id))
+
+
+@app.route('/directors/<int:director_id>/delete', methods=['GET', 'POST'])
+@login_required
+def delete_director(director_id):
+    form = DeleteForm()
+
+    if form.validate_on_submit():
+        DirectorApi.delete(form.id.data)
+        flash('Regisseur verwijderd.')
+        return redirect(url_for('index_directors'))
+
+    return render_template('directors/confirm_delete.html', director=DirectorApi.index_one(director_id), form=form)

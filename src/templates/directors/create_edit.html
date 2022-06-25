@@ -2,13 +2,13 @@
 {% import 'macros/app.html' as macro %}
 
 {% block heading %}
-    {{ macro.breadcrumbs([{'title': 'Acteurs', 'link': url_for('index_actors')}, {'title': 'Acteur'}]) }}
+    {{ macro.breadcrumbs([{'title': 'Regisseurs', 'link': url_for('index_directors')}, {'title': 'Regisseur'}]) }}
 {% endblock %}
 
 {% block content %}
     <div class="space-y-4 sm:space-y-6">
         <h1 class="text-2xl leading-6 font-semibold text-gray-900">
-            {{ 'Acteur aanpassen' if updating else 'Acteur aanmaken' }}
+            {{ 'Regisseur aanpassen' if updating else 'Regisseur aanmaken' }}
         </h1>
 
         <form class="space-y-4" action="#" method="POST">
@@ -19,7 +19,7 @@
                     <div>
                         <label for="first_name" class="block text-sm font-medium text-gray-700">Voornaam</label>
                         <div class="mt-1">
-                            <input value="{{ actor.first_name if updating else '' }}"
+                            <input value="{{ director.first_name if updating else '' }}"
                                    type="text" name="first_name" id="first_name"
                                    class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md">
                         </div>
@@ -31,7 +31,7 @@
                     <div>
                         <label for="last_name" class="block text-sm font-medium text-gray-700">Achternaam</label>
                         <div class="mt-1">
-                            <input value="{{ actor.last_name if updating else '' }}"
+                            <input value="{{ director.last_name if updating else '' }}"
                                    type="text"
                                    name="last_name" id="last_name"
                                    class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md">
@@ -44,7 +44,7 @@
             </div>
 
             <div class="flex justify-end space-x-2">
-                <a href="{{ url_for('index_actors') }}"
+                <a href="{{ url_for('index_directors') }}"
                    class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
                     Annuleren
                 </a>

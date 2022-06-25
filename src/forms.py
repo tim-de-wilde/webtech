@@ -21,6 +21,11 @@ class ActorForm(FlaskForm):
     last_name = StringField('Last name', validators=[DataRequired()])
 
 
+class DirectorForm(FlaskForm):
+    first_name = StringField('First name', validators=[DataRequired()])
+    last_name = StringField('Last name', validators=[DataRequired()])
+
+
 class DeleteForm(FlaskForm):
     id = StringField('Id', validators=[DataRequired()])
 

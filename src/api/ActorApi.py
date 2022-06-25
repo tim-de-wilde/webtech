@@ -23,9 +23,10 @@ class ActorApi:
 
     @staticmethod
     def update(actor_id, form):
-        Actor.query \
-            .filter_by(id=actor_id) \
-            .update(first_name=form.first_name.data, last_name=form.last_name.data)
+        actor = ActorApi.index_one(actor_id)
+
+        actor.first_name = form.first_name.data
+        actor.last_name = form.last_name.data
 
         db.session.commit()
 
