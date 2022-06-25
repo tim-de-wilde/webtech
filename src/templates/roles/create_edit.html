@@ -1,0 +1,77 @@
+{% extends 'layouts/dashboard.html' %}
+{% import 'macros/app.html' as macro %}
+
+{% block heading %}
+    {{ macro.breadcrumbs([{'title': 'Rollen', 'link': url_for('index_roles')}, {'title': 'Rol'}]) }}
+{% endblock %}
+
+{% block content %}
+    <div class="space-y-4 sm:space-y-6">
+        <h1 class="text-2xl leading-6 font-semibold text-gray-900">
+            {{ 'Rol aanpassen' if updating else 'Rol aanmaken' }}
+        </h1>
+
+        <form class="space-y-4" action="#" method="POST">
+            {{ form.csrf_token }}
+
+            <div class="bg-white overflow-hidden shadow sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-4 space-y-4">
+                    <div>
+                        <label for="character_name" class="block text-sm font-medium text-gray-700">Rolnaam</label>
+                        <div class="mt-1">
+                            <input value="{{ role.character_name if updating else '' }}"
+                                   type="text" name="character_name" id="character_name"
+                                   class="shadow-sm focus:ring-teal-500 focus:border-teal-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                        {% for error in form.character_name.errors %}
+                            <span class="mt-1 text-red-400">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div>
+                        <label for="actor_id" class="block text-sm font-medium text-gray-700">Acteur</label>
+                        <div class="mt-1">
+                            <select id="actor_id" name="actor_id"
+                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm rounded-md">
+                                <option value="">Selecteer...</option>
+                                {% for actor in actors %}
+                                    <option value="{{ actor.id }}" {{ 'selected' if (updating and actor.id == role.actor_id) else '' }}>{{ actor.full_name() }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% for error in form.actor_id.errors %}
+                            <span class="mt-1 text-red-400">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div>
+                        <label for="film_id" class="block text-sm font-medium text-gray-700">Film</label>
+                        <div class="mt-1">
+                            <select id="film_id" name="film_id"
+                                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm rounded-md">
+                                <option value="">Selecteer...</option>
+                                {% for film in films %}
+                                    <option value="{{ film.id }}" {{ 'selected' if (updating and film.id == role.film_id) else '' }}>{{ film.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% for error in form.film_id.errors %}
+                            <span class="mt-1 text-red-400">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-2">
+                <a href="{{ url_for('index_roles') }}"
+                   class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                    Annuleren
+                </a>
+                <button type="submit"
+                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                    Opslaan
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

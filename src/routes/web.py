@@ -1,10 +1,12 @@
 from src import app, db
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, login_user, logout_user, current_user
-from src.forms import LoginForm, RegisterForm, ActorForm, DeleteForm, DirectorForm
-from src.models import User, Actor
+from src.forms import LoginForm, RegisterForm, ActorForm, DeleteForm, DirectorForm, RoleForm
+from src.models import User, Actor, Film
 from src.api.ActorApi import ActorApi
 from src.api.DirectorApi import DirectorApi
+from src.api.RoleApi import RoleApi
+from src.api.FilmApi import FilmApi
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -161,3 +163,54 @@ def delete_director(director_id):
         return redirect(url_for('index_directors'))
 
     return render_template('directors/confirm_delete.html', director=DirectorApi.index_one(director_id), form=form)
+
+
+@app.route('/roles')
+@login_required
+def index_roles():
+    return render_template('roles/index.html', roles=RoleApi.index())
+
+
+@app.route('/roles/create', methods=['GET', 'POST'])
+@login_required
+def create_role():
+    form = RoleForm()
+
+    if form.validate_on_submit():
+        RoleApi.create(form)
+        flash('Rol aangemaakt!')
+        return redirect(url_for('index_roles'))
+
+    return render_template('roles/create_edit.html', form=form, updating=False, actors=ActorApi.index(), films=FilmApi.index())
+
+
+@app.route('/roles/<int:role_id>')
+@login_required
+def show_role(role_id):
+    return render_template('roles/show.html', role=RoleApi.index_one(role_id))
+
+
+@app.route('/roles/<int:role_id>/edit', methods=['GET', 'POST'])
+@login_required
+def update_role(role_id):
+    form = RoleForm()
+
+    if form.validate_on_submit():
+        RoleApi.update(role_id, form)
+        flash('Rol aangepast!')
+        return redirect(url_for('index_roles'))
+
+    return render_template('roles/create_edit.html', form=form, updating=True, role=RoleApi.index_one(role_id), actors=ActorApi.index(), films=FilmApi.index())
+
+
+@app.route('/roles/<int:role_id>/delete', methods=['GET', 'POST'])
+@login_required
+def delete_role(role_id):
+    form = DeleteForm()
+
+    if form.validate_on_submit():
+        RoleApi.delete(form.id.data)
+        flash('Rol verwijderd.')
+        return redirect(url_for('index_roles'))
+
+    return render_template('roles/confirm_delete.html', role=RoleApi.index_one(role_id), form=form)

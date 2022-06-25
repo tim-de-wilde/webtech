@@ -37,6 +37,9 @@ class Actor(db.Model):
         self.first_name = first_name
         self.last_name = last_name
 
+    def full_name(self):
+        return self.first_name + ' ' + self.last_name
+
 
 class Director(db.Model):
     __tablename__ = 'directors'
@@ -48,6 +51,9 @@ class Director(db.Model):
     def __init__(self, first_name, last_name):
         self.first_name = first_name
         self.last_name = last_name
+
+    def full_name(self):
+        return self.first_name + ' ' + self.last_name
 
 
 class Film(db.Model):
@@ -71,6 +77,14 @@ class Role(db.Model):
     character_name = db.Column(db.String(64), nullable=False)
     actor_id = db.Column(db.Integer, db.ForeignKey('actors.id'), nullable=False)
     film_id = db.Column(db.Integer, db.ForeignKey('films.id'), nullable=False)
+
+    actor = db.relationship(
+        'Actor', backref='role'
+    )
+
+    film = db.relationship(
+        'Film', backref='role'
+    )
 
     def __init__(self, character_name, actor_id, film_id):
         self.character_name = character_name
